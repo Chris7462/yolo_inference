@@ -1,5 +1,4 @@
-#ifndef INFERENCE_H
-#define INFERENCE_H
+#pragma once
 
 // Cpp native
 #include <fstream>
@@ -12,6 +11,9 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/dnn.hpp>
 
+
+namespace yolo
+{
 struct Detection
 {
   int class_id{0};
@@ -24,7 +26,7 @@ struct Detection
 class Inference
 {
 public:
-  Inference(const std::string &onnxModelPath, const cv::Size &modelInputShape = {640, 640}, const std::string &classesTxtFile = "", const bool &runWithCuda = true);
+  Inference(const std::string & onnxModelPath, const cv::Size & modelInputShape = {640, 640}, const std::string & classesTxtFile = "", const bool & runWithCuda = true);
   std::vector<Detection> runInference(const cv::Mat &input);
 
 private:
@@ -49,4 +51,4 @@ private:
   cv::dnn::Net net;
 };
 
-#endif // INFERENCE_H
+} // namespace yolo
