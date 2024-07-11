@@ -1,14 +1,12 @@
 cmake_minimum_required(VERSION 3.16)
-
 project(yolo_inference VERSION 1.0.0)
 
-find_package(OpenCV REQUIRED)
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-O3 -Wall -Wextra -Wpedantic)
+endif()
 
-# Set the C++ standard
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
-
-# Find OpenCV package
+# find dependencies
+find_package(ament_cmake REQUIRED)
 find_package(OpenCV REQUIRED)
 
 # Define the library target
@@ -16,26 +14,20 @@ add_library(yolo_inference STATIC
   src/inference.cpp)
 
 # Specify include directories for the target
-target_include_directories(yolo_inference PRIVATE
-  ${PROJECT_SOURCE_DIR}/include
+target_include_directories(yolo_inference PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
   ${OpenCV_INCLUDE_DIRS})
 
 # Link OpenCV libraries to the target
-target_link_libraries(yolo_inference
+target_link_libraries(yolo_inference PUBLIC
   ${OpenCV_LIBS})
 
-# # Optionally set properties for the library
-# set_target_properties(yolo_inference PROPERTIES
-#   VERSION ${PROJECT_VERSION}
-#   SOVERSION 1
-# )
-
-# # Optionally create an alias target for convenience
-# add_library(YoloInference::yolo_inference ALIAS yolo_inference)
+target_compile_features(yolo_inference PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
 
 # Optionally install the library
 install(TARGETS yolo_inference
-  EXPORT YoloInferenceTargets
+  EXPORT export_${PROJECT_NAME}
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
   RUNTIME DESTINATION bin
@@ -47,28 +39,19 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/yolo_inference
   DESTINATION include
 )
 
-# # Optionally export the targets for usage in other projects
-# install(EXPORT YoloInferenceTargets
-#   FILE YoloInferenceTargets.cmake
-#   NAMESPACE YoloInference::
-#   DESTINATION lib/cmake/YoloInference
-# )
+ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
+ament_export_dependencies(OpenCV)
 
-# # Optionally add a package configuration file for find_package support
-# include(CMakePackageConfigHelpers)
-# write_basic_package_version_file(
-#   ${CMAKE_CURRENT_BINARY_DIR}/YoloCppConfigVersion.cmake
-#   VERSION ${PROJECT_VERSION}
-#   COMPATIBILITY AnyNewerVersion
-# )
+if(BUILD_TESTING)
+  find_package(ament_lint_auto REQUIRED)
+  # the following line skips the linter which checks for copyrights
+  # comment the line when a copyright and license is added to all source files
+  set(ament_cmake_copyright_FOUND TRUE)
+  # the following line skips cpplint (only works in a git repo)
+  # comment the line when this package is in a git repo and when
+  # a copyright and license is added to all source files
+  set(ament_cmake_cpplint_FOUND TRUE)
+  ament_lint_auto_find_test_dependencies()
+endif()
 
-# configure_package_config_file(${PROJECT_SOURCE_DIR}/YoloCppConfig.cmake.in
-#   ${CMAKE_CURRENT_BINARY_DIR}/YoloCppConfig.cmake
-#   INSTALL_DESTINATION lib/cmake/YoloCpp
-# )
-
-# install(FILES
-#   ${CMAKE_CURRENT_BINARY_DIR}/YoloCppConfig.cmake
-#   ${CMAKE_CURRENT_BINARY_DIR}/YoloCppConfigVersion.cmake
-#   DESTINATION lib/cmake/YoloCpp
-# )
+ament_package()
