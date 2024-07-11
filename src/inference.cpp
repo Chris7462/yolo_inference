@@ -1,4 +1,4 @@
-#include "yolo_cpp/inference.hpp"
+#include "yolo_inference/inference.hpp"
 
 
 Inference::Inference(const std::string &onnxModelPath, const cv::Size &modelInputShape, const std::string &classesTxtFile, const bool &runWithCuda)
