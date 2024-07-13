@@ -4,12 +4,11 @@
 namespace yolo
 {
 
-Inference::Inference(const std::string &onnxModelPath, const cv::Size &modelInputShape, const std::string &classesTxtFile, const bool &runWithCuda)
+Inference::Inference(const std::string &onnxModelPath, const cv::Size &modelInputShape, const std::string &classesTxtFile)
 {
   modelPath = onnxModelPath;
   modelShape = modelInputShape;
   classesPath = classesTxtFile;
-  cudaEnabled = runWithCuda;
 
   loadOnnxNetwork();
   // loadClassesFromFile(); The classes are hard-coded for this example
@@ -155,7 +154,7 @@ void Inference::loadClassesFromFile()
 void Inference::loadOnnxNetwork()
 {
   net = cv::dnn::readNetFromONNX(modelPath);
-  if (cudaEnabled) {
+  if (cv::cuda::getCudaEnabledDeviceCount() > 0) {
     std::cout << "\nRunning on CUDA" << std::endl;
     net.setPreferableBackend(cv::dnn::DNN_BACKEND_CUDA);
     net.setPreferableTarget(cv::dnn::DNN_TARGET_CUDA);
