@@ -4,7 +4,6 @@
 #include <fstream>
 #include <vector>
 #include <string>
-#include <random>
 
 // OpenCV
 #include <opencv2/opencv.hpp>
@@ -18,7 +17,6 @@ struct Detection
   int class_id{0};
   std::string className{};
   float confidence{0.0};
-  cv::Scalar color{};
   cv::Rect box{};
 };
 
@@ -44,8 +42,8 @@ private:
   cv::Size2f modelShape{};
 
   float modelConfidenceThreshold {0.40F}; // {0.25};
-  float modelScoreThreshold      {0.20F}; // {0.45};
-  float modelNMSThreshold        {0.40F}; // {0.50};
+  float modelScoreThreshold {0.20F}; // {0.45};
+  float modelNMSThreshold {0.40F}; // {0.50};
 
   bool letterBoxForSquare = true;
 
