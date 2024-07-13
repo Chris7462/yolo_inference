@@ -17,8 +17,9 @@ Inference::Inference(const std::string &onnxModelPath, const cv::Size &modelInpu
 std::vector<Detection> Inference::runInference(const cv::Mat &input)
 {
   cv::Mat modelInput = input;
-  if (letterBoxForSquare && modelShape.width == modelShape.height)
+  if (letterBoxForSquare && modelShape.width == modelShape.height) {
     modelInput = formatToSquare(modelInput);
+  }
 
   cv::Mat blob;
   cv::dnn::blobFromImage(modelInput, blob, 1.0/255.0, modelShape, cv::Scalar(), true, false);
@@ -33,8 +34,7 @@ std::vector<Detection> Inference::runInference(const cv::Mat &input)
   bool yolov8 = false;
   // yolov5 has an output of shape (batchSize, 25200, 85) (Num classes + box[x,y,w,h] + confidence[c])
   // yolov8 has an output of shape (batchSize, 84,  8400) (Num classes + box[x,y,w,h])
-  if (dimensions > rows) // Check if the shape[2] is more than shape[1] (yolov8)
-  {
+  if (dimensions > rows) { // Check if the shape[2] is more than shape[1] (yolov8)
     yolov8 = true;
     rows = outputs[0].size[2];
     dimensions = outputs[0].size[1];
@@ -42,6 +42,7 @@ std::vector<Detection> Inference::runInference(const cv::Mat &input)
     outputs[0] = outputs[0].reshape(1, dimensions);
     cv::transpose(outputs[0], outputs[0]);
   }
+
   float *data = (float *)outputs[0].data;
 
   float x_factor = modelInput.cols / modelShape.width;
@@ -57,12 +58,12 @@ std::vector<Detection> Inference::runInference(const cv::Mat &input)
 
       cv::Mat scores(1, classes.size(), CV_32FC1, classes_scores);
       cv::Point class_id;
-      double maxClassScore;
+      double max_class_score;
 
-      minMaxLoc(scores, 0, &maxClassScore, 0, &class_id);
+      minMaxLoc(scores, 0, &max_class_score, 0, &class_id);
 
-      if (maxClassScore > modelScoreThreshold) {
-        confidences.push_back(maxClassScore);
+      if (max_class_score > modelScoreThreshold) {
+        confidences.push_back(max_class_score);
         class_ids.push_back(class_id.x);
 
         float x = data[0];
@@ -145,8 +146,9 @@ void Inference::loadClassesFromFile()
   std::ifstream inputFile(classesPath);
   if (inputFile.is_open()) {
     std::string classLine;
-    while (std::getline(inputFile, classLine))
+    while (std::getline(inputFile, classLine)) {
       classes.push_back(classLine);
+    }
     inputFile.close();
   }
 }
