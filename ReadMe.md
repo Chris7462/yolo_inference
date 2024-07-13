@@ -38,3 +38,5 @@ When you are finished with the virtual environment, you can simply deactivate it
 ```bash
 deactivate
 ```
+
+[Reference](https://github.com/opencv/opencv/blob/master/doc/tutorials/dnn/dnn_yolo/dnn_yolo.markdown)
