@@ -1,3 +1,7 @@
+#include <iostream>
+
+#include <opencv2/cudacodec.hpp>
+
 #include "yolo_inference/inference.hpp"
 
 
