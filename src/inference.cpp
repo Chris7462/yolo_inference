@@ -8,7 +8,9 @@
 namespace yolo
 {
 
-Inference::Inference(const std::string &onnxModelPath, const cv::Size &modelInputShape, const std::string &classesTxtFile)
+Inference::Inference(
+  const std::string & onnxModelPath, const cv::Size & modelInputShape,
+  const std::string & classesTxtFile)
 {
   modelPath = onnxModelPath;
   modelShape = modelInputShape;
@@ -18,7 +20,7 @@ Inference::Inference(const std::string &onnxModelPath, const cv::Size &modelInpu
   // loadClassesFromFile(); The classes are hard-coded for this example
 }
 
-std::vector<Detection> Inference::runInference(const cv::Mat &input)
+std::vector<Detection> Inference::runInference(const cv::Mat & input)
 {
   cv::Mat modelInput = input;
   if (letterBoxForSquare && modelShape.width == modelShape.height) {
@@ -26,7 +28,7 @@ std::vector<Detection> Inference::runInference(const cv::Mat &input)
   }
 
   cv::Mat blob;
-  cv::dnn::blobFromImage(modelInput, blob, 1.0/255.0, modelShape, cv::Scalar(), true, false);
+  cv::dnn::blobFromImage(modelInput, blob, 1.0 / 255.0, modelShape, cv::Scalar(), true, false);
   net.setInput(blob);
 
   std::vector<cv::Mat> outputs;
@@ -58,7 +60,7 @@ std::vector<Detection> Inference::runInference(const cv::Mat &input)
 
   for (int i = 0; i < rows; ++i) {
     if (yolov8) {
-      float *classes_scores = data+4;
+      float *classes_scores = data + 4;
 
       cv::Mat scores(1, classes.size(), CV_32FC1, classes_scores);
       cv::Point class_id;
@@ -87,7 +89,7 @@ std::vector<Detection> Inference::runInference(const cv::Mat &input)
       float confidence = data[4];
 
       if (confidence >= modelConfidenceThreshold) {
-        float *classes_scores = data+5;
+        float *classes_scores = data + 5;
 
         cv::Mat scores(1, classes.size(), CV_32FC1, classes_scores);
         cv::Point class_id;
@@ -163,7 +165,7 @@ void Inference::loadOnnxNetwork()
   }
 }
 
-cv::Mat Inference::formatToSquare(const cv::Mat &source)
+cv::Mat Inference::formatToSquare(const cv::Mat & source)
 {
   int col = source.cols;
   int row = source.rows;
